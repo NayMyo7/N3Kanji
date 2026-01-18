@@ -42,15 +42,7 @@ class SelectedKanjiId extends _$SelectedKanjiId {
 @riverpod
 Future<List<Word>> lessonWords(Ref ref) async {
   // Watch lesson selection to trigger rebuild when lesson changes
-  await ref.watch(lessonSelectionProvider.future);
-  final kanjiList = await ref.watch(kanjiListProvider.future);
-  final allWords = await ref.watch(wordStoreProvider.future);
-
-  // Get all kanji IDs for this lesson
-  final kanjiIds = kanjiList.map((k) => k.id).toSet();
-
-  // Filter words that belong to kanji in this lesson
-  return allWords
-      .where((w) => kanjiIds.contains(w.kanjiId))
-      .toList(growable: false);
+  final selection = await ref.watch(lessonSelectionProvider.future);
+  // Use efficient DB query instead of loading all words
+  return ref.watch(wordsByLessonProvider(selection.lesson).future);
 }

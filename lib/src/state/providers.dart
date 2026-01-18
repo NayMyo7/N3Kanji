@@ -1,9 +1,9 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/db/n3kanji_database.dart';
 import '../data/repositories/n3kanji_repository.dart';
+import '../domain/models/paginated_result.dart';
 import '../domain/models/word.dart';
 
 part 'providers.g.dart';
@@ -25,103 +25,78 @@ N3KanjiRepository repository(Ref ref) {
   return N3KanjiRepository(ref.watch(databaseProvider));
 }
 
+/// Toggle favourite status for a word.
+/// Call this from widgets using ref.read(toggleFavouriteProvider(wordId)).
 @riverpod
-class WordStore extends _$WordStore {
-  @override
-  Future<List<Word>> build() async {
-    return ref.watch(repositoryProvider).retrieveAllWord();
-  }
-
-  Future<void> toggleFavourite(Word word) async {
-    final repo = ref.read(repositoryProvider);
-
-    if (word.isFavourite) {
-      await repo.removeFavourite(word.wordId);
-    } else {
-      await repo.markFavourite(word.wordId);
-    }
-
-    final current = switch (state) {
-      AsyncData(:final value) => value,
-      _ => null,
-    };
-    if (current == null) {
-      state = AsyncData(await repo.retrieveAllWord());
-      return;
-    }
-
-    state = AsyncData(
-      current
-          .map(
-            (w) => w.wordId == word.wordId
-                ? w.copyWith(favourite: word.isFavourite ? 0 : 1)
-                : w,
-          )
-          .toList(growable: false),
-    );
-  }
+Future<Word?> toggleFavourite(Ref ref, int wordId) async {
+  final repo = ref.read(repositoryProvider);
+  return repo.toggleFavourite(wordId);
 }
 
+/// Fetch a single word by ID from DB
 @riverpod
-List<Word>? allWordsValue(Ref ref) {
-  return ref.watch(wordStoreProvider.select((v) => switch (v) {
-        AsyncData(:final value) => value,
-        _ => null,
-      }));
+Future<Word?> wordById(Ref ref, int wordId) async {
+  return ref.watch(repositoryProvider).retrieveWordById(wordId);
 }
 
-@riverpod
-List<Word> favouriteWordsValue(Ref ref) {
-  final words = ref.watch(allWordsValueProvider);
-  if (words == null) return const <Word>[];
-  return words.where((w) => w.isFavourite).toList(growable: false);
-}
-
-@riverpod
-AsyncValue<List<Word>> favouriteWords(Ref ref) {
-  final all = ref.watch(wordStoreProvider);
-  return all.whenData(
-    (words) => words.where((w) => w.isFavourite).toList(growable: false),
-  );
-}
-
-@riverpod
-AsyncValue<Word?> wordById(Ref ref, int wordId) {
-  final all = ref.watch(wordStoreProvider);
-  return all.whenData((words) {
-    for (final w in words) {
-      if (w.wordId == wordId) return w;
-    }
-    return null;
-  });
-}
-
+/// Synchronous access to word by ID (for UI that needs immediate value)
 @riverpod
 Word? wordByIdValue(Ref ref, int wordId) {
-  final words = ref.watch(wordStoreProvider.select((v) => switch (v) {
-        AsyncData(:final value) => value,
-        _ => null,
-      }));
-  if (words == null) return null;
-  for (final w in words) {
-    if (w.wordId == wordId) return w;
-  }
-  return null;
-}
-
-@riverpod
-AsyncValue<List<Word>> wordsByKanji(Ref ref, int kanjiId) {
-  final all = ref.watch(wordStoreProvider);
-  return all.whenData(
-    (words) => words.where((w) => w.kanjiId == kanjiId).toList(growable: false),
+  final asyncWord = ref.watch(wordByIdProvider(wordId));
+  return asyncWord.when(
+    data: (word) => word,
+    loading: () => asyncWord.hasValue ? asyncWord.value : null,
+    error: (_, __) => asyncWord.hasValue ? asyncWord.value : null,
   );
 }
 
+/// Fetch words by kanji ID from DB
+@riverpod
+Future<List<Word>> wordsByKanji(Ref ref, int kanjiId) async {
+  return ref.watch(repositoryProvider).retrieveWordsByKanji(kanjiId);
+}
+
+/// Synchronous access to words by kanji (for UI that needs immediate value)
 @riverpod
 List<Word> wordsByKanjiValue(Ref ref, int kanjiId) {
-  final words = ref.watch(allWordsValueProvider);
-  if (words == null) return const <Word>[];
-  return words.where((w) => w.kanjiId == kanjiId).toList(growable: false);
+  final asyncWords = ref.watch(wordsByKanjiProvider(kanjiId));
+  return asyncWords.when(
+    data: (words) => words,
+    loading: () => asyncWords.hasValue ? asyncWords.value! : const <Word>[],
+    error: (_, __) => asyncWords.hasValue ? asyncWords.value! : const <Word>[],
+  );
+}
+
+/// Fetch words by lesson from DB
+@riverpod
+Future<List<Word>> wordsByLesson(Ref ref, int lesson) async {
+  return ref.watch(repositoryProvider).retrieveWordsByLesson(lesson);
+}
+
+/// Fetch paginated favourite words from DB
+@riverpod
+Future<PaginatedResult<Word>> favouriteWordsPaginated(
+  Ref ref, {
+  int page = 1,
+  int pageSize = 50,
+}) async {
+  return ref.watch(repositoryProvider).retrieveFavouriteWordsPaginated(
+        pagination: PaginationParams(page: page, pageSize: pageSize),
+      );
+}
+
+/// Fetch paginated words with filters from DB
+@riverpod
+Future<PaginatedResult<Word>> wordsPaginated(
+  Ref ref, {
+  int page = 1,
+  int pageSize = 50,
+  WordSearchFilters filters = const WordSearchFilters(),
+}) async {
+  return ref.watch(repositoryProvider).retrieveWordsPaginated(
+        pagination: PaginationParams(page: page, pageSize: pageSize),
+        filters: filters,
+      );
 }
 
 class LessonSelectionData {

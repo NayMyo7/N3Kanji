@@ -178,9 +178,11 @@ class _WordTrailingActions extends ConsumerWidget {
                     ? AppColors.favouriteActive
                     : AppColors.favouriteInactive,
               ),
-              onPressed: () => ref
-                  .read(wordStoreProvider.notifier)
-                  .toggleFavourite(currentWord),
+              onPressed: () async {
+                await ref
+                    .read(toggleFavouriteProvider(currentWord.wordId).future);
+                ref.invalidate(wordByIdProvider(currentWord.wordId));
+              },
             ),
           ),
           const SizedBox(height: AppSizes.xxs),

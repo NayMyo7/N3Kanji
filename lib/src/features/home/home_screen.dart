@@ -124,8 +124,8 @@ class _MainBody extends ConsumerWidget {
         if (tabIndex == 1) {
           return FlashcardsTab(words: lessonWords);
         }
-        final allWords = ref.watch(wordStoreProvider).value ?? lessonWords;
-        return QuizTab(words: lessonWords, allWords: allWords);
+        // Use lesson words as fallback pool for quiz options (same context, memory efficient)
+        return QuizTab(words: lessonWords, allWords: lessonWords);
       },
       error: (e, st) => ErrorView(message: e.toString()),
       loading: () => const LoadingIndicator(),

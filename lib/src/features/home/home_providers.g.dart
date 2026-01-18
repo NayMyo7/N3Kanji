@@ -115,4 +115,4 @@ final class LessonWordsProvider extends $FunctionalProvider<
   }
 }
 
-String _$lessonWordsHash() => r'b3831a0461cc56a3542744fd944f87109b6dc8ea';
+String _$lessonWordsHash() => r'f555bf5ef55f2355a1a2ac8aa0823e0ba7ed3942';

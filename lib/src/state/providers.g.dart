@@ -128,178 +128,104 @@ final class RepositoryProvider extends $FunctionalProvider<N3KanjiRepository,
 
 String _$repositoryHash() => r'07bd13ababc6dc50a4aded9596bc680c4c9f6187';
 
-@ProviderFor(WordStore)
-final wordStoreProvider = WordStoreProvider._();
+/// Toggle favourite status for a word.
+/// Call this from widgets using ref.read(toggleFavouriteProvider(wordId)).
 
-final class WordStoreProvider
-    extends $AsyncNotifierProvider<WordStore, List<Word>> {
-  WordStoreProvider._()
+@ProviderFor(toggleFavourite)
+final toggleFavouriteProvider = ToggleFavouriteFamily._();
+
+/// Toggle favourite status for a word.
+/// Call this from widgets using ref.read(toggleFavouriteProvider(wordId)).
+
+final class ToggleFavouriteProvider
+    extends $FunctionalProvider<AsyncValue<Word?>, Word?, FutureOr<Word?>>
+    with $FutureModifier<Word?>, $FutureProvider<Word?> {
+  /// Toggle favourite status for a word.
+  /// Call this from widgets using ref.read(toggleFavouriteProvider(wordId)).
+  ToggleFavouriteProvider._(
+      {required ToggleFavouriteFamily super.from, required int super.argument})
       : super(
-          from: null,
-          argument: null,
           retry: null,
-          name: r'wordStoreProvider',
+          name: r'toggleFavouriteProvider',
           isAutoDispose: true,
           dependencies: null,
           $allTransitiveDependencies: null,
         );
 
   @override
-  String debugGetCreateSourceHash() => _$wordStoreHash();
+  String debugGetCreateSourceHash() => _$toggleFavouriteHash();
+
+  @override
+  String toString() {
+    return r'toggleFavouriteProvider'
+        ''
+        '($argument)';
+  }
 
   @$internal
   @override
-  WordStore create() => WordStore();
-}
-
-String _$wordStoreHash() => r'9fcdfa3122dff42cf739a8f84cbfe248b7643c9a';
-
-abstract class _$WordStore extends $AsyncNotifier<List<Word>> {
-  FutureOr<List<Word>> build();
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    final ref = this.ref as $Ref<AsyncValue<List<Word>>, List<Word>>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<AsyncValue<List<Word>>, List<Word>>,
-        AsyncValue<List<Word>>,
-        Object?,
-        Object?>;
-    element.handleCreate(ref, build);
-  }
-}
-
-@ProviderFor(allWordsValue)
-final allWordsValueProvider = AllWordsValueProvider._();
-
-final class AllWordsValueProvider
-    extends $FunctionalProvider<List<Word>?, List<Word>?, List<Word>?>
-    with $Provider<List<Word>?> {
-  AllWordsValueProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'allWordsValueProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  $FutureProviderElement<Word?> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
-  String debugGetCreateSourceHash() => _$allWordsValueHash();
-
-  @$internal
-  @override
-  $ProviderElement<List<Word>?> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  List<Word>? create(Ref ref) {
-    return allWordsValue(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(List<Word>? value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<List<Word>?>(value),
+  FutureOr<Word?> create(Ref ref) {
+    final argument = this.argument as int;
+    return toggleFavourite(
+      ref,
+      argument,
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ToggleFavouriteProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
 }
 
-String _$allWordsValueHash() => r'7325825032cc7a9d8a63571eab636c9386e3a086';
+String _$toggleFavouriteHash() => r'ee1f82d18e26a599772f70c9bb566329dec38d11';
 
-@ProviderFor(favouriteWordsValue)
-final favouriteWordsValueProvider = FavouriteWordsValueProvider._();
+/// Toggle favourite status for a word.
+/// Call this from widgets using ref.read(toggleFavouriteProvider(wordId)).
 
-final class FavouriteWordsValueProvider
-    extends $FunctionalProvider<List<Word>, List<Word>, List<Word>>
-    with $Provider<List<Word>> {
-  FavouriteWordsValueProvider._()
+final class ToggleFavouriteFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<Word?>, int> {
+  ToggleFavouriteFamily._()
       : super(
-          from: null,
-          argument: null,
           retry: null,
-          name: r'favouriteWordsValueProvider',
-          isAutoDispose: true,
+          name: r'toggleFavouriteProvider',
           dependencies: null,
           $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$favouriteWordsValueHash();
-
-  @$internal
-  @override
-  $ProviderElement<List<Word>> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  List<Word> create(Ref ref) {
-    return favouriteWordsValue(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(List<Word> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<List<Word>>(value),
-    );
-  }
-}
-
-String _$favouriteWordsValueHash() =>
-    r'21d6ac0943c544ab2080950e5f6d353d6b2568cc';
-
-@ProviderFor(favouriteWords)
-final favouriteWordsProvider = FavouriteWordsProvider._();
-
-final class FavouriteWordsProvider extends $FunctionalProvider<
-    AsyncValue<List<Word>>,
-    AsyncValue<List<Word>>,
-    AsyncValue<List<Word>>> with $Provider<AsyncValue<List<Word>>> {
-  FavouriteWordsProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'favouriteWordsProvider',
           isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
         );
 
-  @override
-  String debugGetCreateSourceHash() => _$favouriteWordsHash();
+  /// Toggle favourite status for a word.
+  /// Call this from widgets using ref.read(toggleFavouriteProvider(wordId)).
 
-  @$internal
-  @override
-  $ProviderElement<AsyncValue<List<Word>>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  ToggleFavouriteProvider call(
+    int wordId,
+  ) =>
+      ToggleFavouriteProvider._(argument: wordId, from: this);
 
   @override
-  AsyncValue<List<Word>> create(Ref ref) {
-    return favouriteWords(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AsyncValue<List<Word>> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<AsyncValue<List<Word>>>(value),
-    );
-  }
+  String toString() => r'toggleFavouriteProvider';
 }
 
-String _$favouriteWordsHash() => r'697b8a10cd1479c85a9195b5672d5ae963f48643';
+/// Fetch a single word by ID from DB
 
 @ProviderFor(wordById)
 final wordByIdProvider = WordByIdFamily._();
 
-final class WordByIdProvider extends $FunctionalProvider<AsyncValue<Word?>,
-    AsyncValue<Word?>, AsyncValue<Word?>> with $Provider<AsyncValue<Word?>> {
+/// Fetch a single word by ID from DB
+
+final class WordByIdProvider
+    extends $FunctionalProvider<AsyncValue<Word?>, Word?, FutureOr<Word?>>
+    with $FutureModifier<Word?>, $FutureProvider<Word?> {
+  /// Fetch a single word by ID from DB
   WordByIdProvider._(
       {required WordByIdFamily super.from, required int super.argument})
       : super(
@@ -322,24 +248,15 @@ final class WordByIdProvider extends $FunctionalProvider<AsyncValue<Word?>,
 
   @$internal
   @override
-  $ProviderElement<AsyncValue<Word?>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $FutureProviderElement<Word?> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
-  AsyncValue<Word?> create(Ref ref) {
+  FutureOr<Word?> create(Ref ref) {
     final argument = this.argument as int;
     return wordById(
       ref,
       argument,
-    );
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AsyncValue<Word?> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<AsyncValue<Word?>>(value),
     );
   }
 
@@ -354,10 +271,12 @@ final class WordByIdProvider extends $FunctionalProvider<AsyncValue<Word?>,
   }
 }
 
-String _$wordByIdHash() => r'1553a28fcf093a6ee8c459c1d2b51e2404853e72';
+String _$wordByIdHash() => r'47730dd34c37c7ae9b8be4b92a250cde5740a43c';
+
+/// Fetch a single word by ID from DB
 
 final class WordByIdFamily extends $Family
-    with $FunctionalFamilyOverride<AsyncValue<Word?>, int> {
+    with $FunctionalFamilyOverride<FutureOr<Word?>, int> {
   WordByIdFamily._()
       : super(
           retry: null,
@@ -366,6 +285,8 @@ final class WordByIdFamily extends $Family
           $allTransitiveDependencies: null,
           isAutoDispose: true,
         );
+
+  /// Fetch a single word by ID from DB
 
   WordByIdProvider call(
     int wordId,
@@ -376,11 +297,16 @@ final class WordByIdFamily extends $Family
   String toString() => r'wordByIdProvider';
 }
 
+/// Synchronous access to word by ID (for UI that needs immediate value)
+
 @ProviderFor(wordByIdValue)
 final wordByIdValueProvider = WordByIdValueFamily._();
 
+/// Synchronous access to word by ID (for UI that needs immediate value)
+
 final class WordByIdValueProvider
     extends $FunctionalProvider<Word?, Word?, Word?> with $Provider<Word?> {
+  /// Synchronous access to word by ID (for UI that needs immediate value)
   WordByIdValueProvider._(
       {required WordByIdValueFamily super.from, required int super.argument})
       : super(
@@ -434,7 +360,9 @@ final class WordByIdValueProvider
   }
 }
 
-String _$wordByIdValueHash() => r'e5aff3221d32eb574ec34323d59bd9a95afa35c3';
+String _$wordByIdValueHash() => r'35688c73eeef42ab2fae9ae469c3cb7341406a65';
+
+/// Synchronous access to word by ID (for UI that needs immediate value)
 
 final class WordByIdValueFamily extends $Family
     with $FunctionalFamilyOverride<Word?, int> {
@@ -447,6 +375,8 @@ final class WordByIdValueFamily extends $Family
           isAutoDispose: true,
         );
 
+  /// Synchronous access to word by ID (for UI that needs immediate value)
+
   WordByIdValueProvider call(
     int wordId,
   ) =>
@@ -456,13 +386,17 @@ final class WordByIdValueFamily extends $Family
   String toString() => r'wordByIdValueProvider';
 }
 
+/// Fetch words by kanji ID from DB
+
 @ProviderFor(wordsByKanji)
 final wordsByKanjiProvider = WordsByKanjiFamily._();
 
+/// Fetch words by kanji ID from DB
+
 final class WordsByKanjiProvider extends $FunctionalProvider<
-    AsyncValue<List<Word>>,
-    AsyncValue<List<Word>>,
-    AsyncValue<List<Word>>> with $Provider<AsyncValue<List<Word>>> {
+        AsyncValue<List<Word>>, List<Word>, FutureOr<List<Word>>>
+    with $FutureModifier<List<Word>>, $FutureProvider<List<Word>> {
+  /// Fetch words by kanji ID from DB
   WordsByKanjiProvider._(
       {required WordsByKanjiFamily super.from, required int super.argument})
       : super(
@@ -485,24 +419,15 @@ final class WordsByKanjiProvider extends $FunctionalProvider<
 
   @$internal
   @override
-  $ProviderElement<AsyncValue<List<Word>>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $FutureProviderElement<List<Word>> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
-  AsyncValue<List<Word>> create(Ref ref) {
+  FutureOr<List<Word>> create(Ref ref) {
     final argument = this.argument as int;
     return wordsByKanji(
       ref,
       argument,
-    );
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AsyncValue<List<Word>> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<AsyncValue<List<Word>>>(value),
     );
   }
 
@@ -517,10 +442,12 @@ final class WordsByKanjiProvider extends $FunctionalProvider<
   }
 }
 
-String _$wordsByKanjiHash() => r'a95c62137dc3136d828f40086c39344fa0220e82';
+String _$wordsByKanjiHash() => r'977fbfb41e01265aadd14eb22112733bb2c171d6';
+
+/// Fetch words by kanji ID from DB
 
 final class WordsByKanjiFamily extends $Family
-    with $FunctionalFamilyOverride<AsyncValue<List<Word>>, int> {
+    with $FunctionalFamilyOverride<FutureOr<List<Word>>, int> {
   WordsByKanjiFamily._()
       : super(
           retry: null,
@@ -529,6 +456,8 @@ final class WordsByKanjiFamily extends $Family
           $allTransitiveDependencies: null,
           isAutoDispose: true,
         );
+
+  /// Fetch words by kanji ID from DB
 
   WordsByKanjiProvider call(
     int kanjiId,
@@ -539,12 +468,17 @@ final class WordsByKanjiFamily extends $Family
   String toString() => r'wordsByKanjiProvider';
 }
 
+/// Synchronous access to words by kanji (for UI that needs immediate value)
+
 @ProviderFor(wordsByKanjiValue)
 final wordsByKanjiValueProvider = WordsByKanjiValueFamily._();
+
+/// Synchronous access to words by kanji (for UI that needs immediate value)
 
 final class WordsByKanjiValueProvider
     extends $FunctionalProvider<List<Word>, List<Word>, List<Word>>
     with $Provider<List<Word>> {
+  /// Synchronous access to words by kanji (for UI that needs immediate value)
   WordsByKanjiValueProvider._(
       {required WordsByKanjiValueFamily super.from,
       required int super.argument})
@@ -599,7 +533,9 @@ final class WordsByKanjiValueProvider
   }
 }
 
-String _$wordsByKanjiValueHash() => r'e2654d3de872a908c93f530641c8f806a87195f2';
+String _$wordsByKanjiValueHash() => r'e9515c8467677a6683dccf7a9bc99a3aba565230';
+
+/// Synchronous access to words by kanji (for UI that needs immediate value)
 
 final class WordsByKanjiValueFamily extends $Family
     with $FunctionalFamilyOverride<List<Word>, int> {
@@ -612,6 +548,8 @@ final class WordsByKanjiValueFamily extends $Family
           isAutoDispose: true,
         );
 
+  /// Synchronous access to words by kanji (for UI that needs immediate value)
+
   WordsByKanjiValueProvider call(
     int kanjiId,
   ) =>
@@ -619,6 +557,308 @@ final class WordsByKanjiValueFamily extends $Family
 
   @override
   String toString() => r'wordsByKanjiValueProvider';
+}
+
+/// Fetch words by lesson from DB
+
+@ProviderFor(wordsByLesson)
+final wordsByLessonProvider = WordsByLessonFamily._();
+
+/// Fetch words by lesson from DB
+
+final class WordsByLessonProvider extends $FunctionalProvider<
+        AsyncValue<List<Word>>, List<Word>, FutureOr<List<Word>>>
+    with $FutureModifier<List<Word>>, $FutureProvider<List<Word>> {
+  /// Fetch words by lesson from DB
+  WordsByLessonProvider._(
+      {required WordsByLessonFamily super.from, required int super.argument})
+      : super(
+          retry: null,
+          name: r'wordsByLessonProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$wordsByLessonHash();
+
+  @override
+  String toString() {
+    return r'wordsByLessonProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<List<Word>> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<List<Word>> create(Ref ref) {
+    final argument = this.argument as int;
+    return wordsByLesson(
+      ref,
+      argument,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is WordsByLessonProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$wordsByLessonHash() => r'1ead628b5f6d8d05464adbcc72c90924331a435c';
+
+/// Fetch words by lesson from DB
+
+final class WordsByLessonFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<List<Word>>, int> {
+  WordsByLessonFamily._()
+      : super(
+          retry: null,
+          name: r'wordsByLessonProvider',
+          dependencies: null,
+          $allTransitiveDependencies: null,
+          isAutoDispose: true,
+        );
+
+  /// Fetch words by lesson from DB
+
+  WordsByLessonProvider call(
+    int lesson,
+  ) =>
+      WordsByLessonProvider._(argument: lesson, from: this);
+
+  @override
+  String toString() => r'wordsByLessonProvider';
+}
+
+/// Fetch paginated favourite words from DB
+
+@ProviderFor(favouriteWordsPaginated)
+final favouriteWordsPaginatedProvider = FavouriteWordsPaginatedFamily._();
+
+/// Fetch paginated favourite words from DB
+
+final class FavouriteWordsPaginatedProvider extends $FunctionalProvider<
+        AsyncValue<PaginatedResult<Word>>,
+        PaginatedResult<Word>,
+        FutureOr<PaginatedResult<Word>>>
+    with
+        $FutureModifier<PaginatedResult<Word>>,
+        $FutureProvider<PaginatedResult<Word>> {
+  /// Fetch paginated favourite words from DB
+  FavouriteWordsPaginatedProvider._(
+      {required FavouriteWordsPaginatedFamily super.from,
+      required ({
+        int page,
+        int pageSize,
+      })
+          super.argument})
+      : super(
+          retry: null,
+          name: r'favouriteWordsPaginatedProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$favouriteWordsPaginatedHash();
+
+  @override
+  String toString() {
+    return r'favouriteWordsPaginatedProvider'
+        ''
+        '$argument';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<PaginatedResult<Word>> $createElement(
+          $ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<PaginatedResult<Word>> create(Ref ref) {
+    final argument = this.argument as ({
+      int page,
+      int pageSize,
+    });
+    return favouriteWordsPaginated(
+      ref,
+      page: argument.page,
+      pageSize: argument.pageSize,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is FavouriteWordsPaginatedProvider &&
+        other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$favouriteWordsPaginatedHash() =>
+    r'f22d98fbda2ef3d3038b8feca9cff62319c73e3b';
+
+/// Fetch paginated favourite words from DB
+
+final class FavouriteWordsPaginatedFamily extends $Family
+    with
+        $FunctionalFamilyOverride<
+            FutureOr<PaginatedResult<Word>>,
+            ({
+              int page,
+              int pageSize,
+            })> {
+  FavouriteWordsPaginatedFamily._()
+      : super(
+          retry: null,
+          name: r'favouriteWordsPaginatedProvider',
+          dependencies: null,
+          $allTransitiveDependencies: null,
+          isAutoDispose: true,
+        );
+
+  /// Fetch paginated favourite words from DB
+
+  FavouriteWordsPaginatedProvider call({
+    int page = 1,
+    int pageSize = 50,
+  }) =>
+      FavouriteWordsPaginatedProvider._(argument: (
+        page: page,
+        pageSize: pageSize,
+      ), from: this);
+
+  @override
+  String toString() => r'favouriteWordsPaginatedProvider';
+}
+
+/// Fetch paginated words with filters from DB
+
+@ProviderFor(wordsPaginated)
+final wordsPaginatedProvider = WordsPaginatedFamily._();
+
+/// Fetch paginated words with filters from DB
+
+final class WordsPaginatedProvider extends $FunctionalProvider<
+        AsyncValue<PaginatedResult<Word>>,
+        PaginatedResult<Word>,
+        FutureOr<PaginatedResult<Word>>>
+    with
+        $FutureModifier<PaginatedResult<Word>>,
+        $FutureProvider<PaginatedResult<Word>> {
+  /// Fetch paginated words with filters from DB
+  WordsPaginatedProvider._(
+      {required WordsPaginatedFamily super.from,
+      required ({
+        int page,
+        int pageSize,
+        WordSearchFilters filters,
+      })
+          super.argument})
+      : super(
+          retry: null,
+          name: r'wordsPaginatedProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$wordsPaginatedHash();
+
+  @override
+  String toString() {
+    return r'wordsPaginatedProvider'
+        ''
+        '$argument';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<PaginatedResult<Word>> $createElement(
+          $ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<PaginatedResult<Word>> create(Ref ref) {
+    final argument = this.argument as ({
+      int page,
+      int pageSize,
+      WordSearchFilters filters,
+    });
+    return wordsPaginated(
+      ref,
+      page: argument.page,
+      pageSize: argument.pageSize,
+      filters: argument.filters,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is WordsPaginatedProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$wordsPaginatedHash() => r'0d45acb1a8ff2f4b43b38da358f6f4f289b814d7';
+
+/// Fetch paginated words with filters from DB
+
+final class WordsPaginatedFamily extends $Family
+    with
+        $FunctionalFamilyOverride<
+            FutureOr<PaginatedResult<Word>>,
+            ({
+              int page,
+              int pageSize,
+              WordSearchFilters filters,
+            })> {
+  WordsPaginatedFamily._()
+      : super(
+          retry: null,
+          name: r'wordsPaginatedProvider',
+          dependencies: null,
+          $allTransitiveDependencies: null,
+          isAutoDispose: true,
+        );
+
+  /// Fetch paginated words with filters from DB
+
+  WordsPaginatedProvider call({
+    int page = 1,
+    int pageSize = 50,
+    WordSearchFilters filters = const WordSearchFilters(),
+  }) =>
+      WordsPaginatedProvider._(argument: (
+        page: page,
+        pageSize: pageSize,
+        filters: filters,
+      ), from: this);
+
+  @override
+  String toString() => r'wordsPaginatedProvider';
 }
 
 @ProviderFor(LessonSelection)

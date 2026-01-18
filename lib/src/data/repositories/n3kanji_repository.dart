@@ -129,4 +129,48 @@ class N3KanjiRepository {
       whereArgs: [id],
     );
   }
+
+  /// Retrieve words by kanji ID (efficient DB query instead of in-memory filter)
+  Future<List<Word>> retrieveWordsByKanji(int kanjiId) async {
+    final rows = await _db.rawQuery(
+      'SELECT * FROM word WHERE kanji = ? ORDER BY _id',
+      [kanjiId],
+    );
+    return rows.map(Word.fromRow).toList(growable: false);
+  }
+
+  /// Retrieve words by lesson (efficient DB query using indexed join)
+  Future<List<Word>> retrieveWordsByLesson(int lesson) async {
+    final rows = await _db.rawQuery(
+      'SELECT w.* FROM word w INNER JOIN kanji k ON w.kanji = k._id WHERE k.lesson = ? ORDER BY w._id',
+      [lesson],
+    );
+    return rows.map(Word.fromRow).toList(growable: false);
+  }
+
+  /// Retrieve a single word by ID
+  Future<Word?> retrieveWordById(int wordId) async {
+    final rows = await _db.rawQuery(
+      'SELECT * FROM word WHERE _id = ?',
+      [wordId],
+    );
+    if (rows.isEmpty) return null;
+    return Word.fromRow(rows.first);
+  }
+
+  /// Toggle favourite status and return the updated word
+  Future<Word?> toggleFavourite(int wordId) async {
+    final word = await retrieveWordById(wordId);
+    if (word == null) return null;
+
+    final newFavourite = word.isFavourite ? 0 : 1;
+    await _db.update(
+      'word',
+      {'favourite': newFavourite},
+      where: '_id=?',
+      whereArgs: [wordId],
+    );
+
+    return word.copyWith(favourite: newFavourite);
+  }
 }

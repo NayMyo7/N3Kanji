@@ -77,15 +77,9 @@ class PaginatedSearch extends _$PaginatedSearch {
         filters: filters,
       );
 
-      state = state.copyWith(
-        result: result,
-        isLoadingMore: false,
-      );
+      state = state.copyWith(result: result, isLoadingMore: false);
     } catch (e) {
-      state = state.copyWith(
-        error: e,
-        isLoadingMore: false,
-      );
+      state = state.copyWith(error: e, isLoadingMore: false);
     }
   }
 
@@ -119,10 +113,7 @@ class PaginatedSearch extends _$PaginatedSearch {
         isLoadingMore: false,
       );
     } catch (e) {
-      state = state.copyWith(
-        error: e,
-        isLoadingMore: false,
-      );
+      state = state.copyWith(error: e, isLoadingMore: false);
     }
   }
 
@@ -132,11 +123,7 @@ class PaginatedSearch extends _$PaginatedSearch {
     int? lesson,
     bool? favouritesOnly,
   }) async {
-    await search(
-      query: query,
-      lesson: lesson,
-      favouritesOnly: favouritesOnly,
-    );
+    await search(query: query, lesson: lesson, favouritesOnly: favouritesOnly);
   }
 
   /// Clear all filters and reset

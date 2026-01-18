@@ -27,8 +27,10 @@ class WordDetailScreen extends ConsumerWidget {
         actions: [
           IconButton(
             tooltip: w.isFavourite ? 'Remove favourite' : 'Add favourite',
-            onPressed: () =>
-                ref.read(wordStoreProvider.notifier).toggleFavourite(w),
+            onPressed: () async {
+              await ref.read(toggleFavouriteProvider(w.wordId).future);
+              ref.invalidate(wordByIdProvider(w.wordId));
+            },
             icon: Icon(
               w.isFavourite ? Icons.star : Icons.star_border,
               size: 22,

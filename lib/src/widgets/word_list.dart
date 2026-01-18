@@ -45,6 +45,9 @@ class _WordListItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Watch the word by ID to get reactive favourite updates
+    final currentWord = ref.watch(wordByIdValueProvider(word.wordId)) ?? word;
+
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(
         vertical: AppSizes.listTileVerticalPadding,
@@ -53,7 +56,7 @@ class _WordListItem extends ConsumerWidget {
       onTap: () => context.push('/word', extra: word),
       onLongPress: onLongPress != null ? () => onLongPress!(word) : null,
       leading: Text(
-        word.word,
+        currentWord.word,
         style: const TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w400,
@@ -66,12 +69,12 @@ class _WordListItem extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            word.japanese,
+            currentWord.japanese,
             style: const TextStyle(fontSize: 13, color: Colors.black),
           ),
           const SizedBox(height: AppSizes.sm),
           Text(
-            word.burmese,
+            currentWord.burmese,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
@@ -82,12 +85,12 @@ class _WordListItem extends ConsumerWidget {
           ),
           const SizedBox(height: AppSizes.xs),
           Text(
-            word.english,
+            currentWord.english,
             style: const TextStyle(fontSize: 14, color: Color(0xFF212121)),
           ),
         ],
       ),
-      trailing: _WordTrailingActions(word: word),
+      trailing: _WordTrailingActions(word: currentWord),
     );
   }
 }
@@ -120,8 +123,10 @@ class _WordTrailingActions extends ConsumerWidget {
                     ? AppColors.favouriteActive
                     : AppColors.favouriteInactive,
               ),
-              onPressed: () =>
-                  ref.read(wordStoreProvider.notifier).toggleFavourite(word),
+              onPressed: () async {
+                await ref.read(toggleFavouriteProvider(word.wordId).future);
+                ref.invalidate(wordByIdProvider(word.wordId));
+              },
             ),
           ),
           const SizedBox(height: AppSizes.xxs),

@@ -44,7 +44,6 @@ class FavouritesState {
 class PaginatedFavourites extends _$PaginatedFavourites {
   @override
   FavouritesState build() {
-    // Return empty state initially, load will be triggered by screen
     return const FavouritesState();
   }
 
