@@ -885,7 +885,7 @@ final class LessonSelectionProvider
   LessonSelection create() => LessonSelection();
 }
 
-String _$lessonSelectionHash() => r'22debdc414603335150d7a609065587dd48c9004';
+String _$lessonSelectionHash() => r'2fbbeeebe2aaf69df6959b8c45f4d2db265482c5';
 
 abstract class _$LessonSelection extends $AsyncNotifier<LessonSelectionData> {
   FutureOr<LessonSelectionData> build();
@@ -902,3 +902,47 @@ abstract class _$LessonSelection extends $AsyncNotifier<LessonSelectionData> {
     element.handleCreate(ref, build);
   }
 }
+
+@ProviderFor(lessonSelectionValue)
+final lessonSelectionValueProvider = LessonSelectionValueProvider._();
+
+final class LessonSelectionValueProvider extends $FunctionalProvider<
+    LessonSelectionData,
+    LessonSelectionData,
+    LessonSelectionData> with $Provider<LessonSelectionData> {
+  LessonSelectionValueProvider._()
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'lessonSelectionValueProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$lessonSelectionValueHash();
+
+  @$internal
+  @override
+  $ProviderElement<LessonSelectionData> $createElement(
+          $ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  LessonSelectionData create(Ref ref) {
+    return lessonSelectionValue(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(LessonSelectionData value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<LessonSelectionData>(value),
+    );
+  }
+}
+
+String _$lessonSelectionValueHash() =>
+    r'946c91eb6b9ec9e19be925c6afab9a5ba219142f';

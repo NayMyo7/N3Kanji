@@ -124,10 +124,10 @@ class LessonSelection extends _$LessonSelection {
   @override
   Future<LessonSelectionData> build() async {
     final prefs = await ref.watch(sharedPreferencesProvider.future);
-    return LessonSelectionData(
-      lesson: prefs.getInt(_kLesson) ?? 1,
-      position: prefs.getInt(_kPosition) ?? 0,
-    );
+    // Use synchronous access to reduce delay
+    final lesson = prefs.getInt(_kLesson) ?? 1;
+    final position = prefs.getInt(_kPosition) ?? 0;
+    return LessonSelectionData(lesson: lesson, position: position);
   }
 
   Future<void> setLesson(int lesson) async {
@@ -144,4 +144,15 @@ class LessonSelection extends _$LessonSelection {
     await prefs.setInt(_kPosition, position);
     state = AsyncData(current.copyWith(position: position));
   }
+}
+
+// Synchronous provider for immediate access to lesson selection
+@riverpod
+LessonSelectionData lessonSelectionValue(Ref ref) {
+  final asyncSelection = ref.watch(lessonSelectionProvider);
+  return asyncSelection.when(
+    data: (selection) => selection,
+    loading: () => const LessonSelectionData(lesson: 1, position: 0),
+    error: (_, __) => const LessonSelectionData(lesson: 1, position: 0),
+  );
 }

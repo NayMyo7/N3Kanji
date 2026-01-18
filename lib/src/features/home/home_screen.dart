@@ -37,72 +37,66 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    // Preload providers to reduce splash screen delay
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(lessonSelectionProvider.future);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final selectionAsync = ref.watch(lessonSelectionProvider);
+    final selection = ref.watch(lessonSelectionValueProvider);
 
-    return selectionAsync.when(
-      data: (selection) {
-        final title = widget._screenTitle(selection.lesson);
+    final title = widget._screenTitle(selection.lesson);
 
-        return Scaffold(
-          appBar: AppBar(
-            centerTitle: false,
-            titleSpacing: 0,
-            title: Text(title),
-          ),
-          drawer: LessonDrawer(
-            currentLesson: selection.lesson,
-            onSelect: (lesson) async {
-              if (lesson == selection.lesson) {
-                if (context.mounted) Navigator.of(context).pop();
-                return;
-              }
-              await ref
-                  .read(lessonSelectionProvider.notifier)
-                  .setLesson(lesson);
-              await ref
-                  .read(selectedKanjiIdProvider.notifier)
-                  .setSelectedId(null);
-              ref.invalidate(kanjiListProvider);
-              ref.invalidate(selectedKanjiIdProvider);
-              setState(() => _tabIndex = 0);
-              if (context.mounted) Navigator.of(context).pop();
-            },
-          ),
-          body: _MainBody(
-            tabIndex: _tabIndex,
-          ),
-          bottomNavigationBar: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const AdBanner(useSafeArea: false),
-              BottomNavigationBar(
-                currentIndex: _tabIndex,
-                onTap: (index) => setState(() => _tabIndex = index),
-                items: const [
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.menu_book),
-                    label: 'Study',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.style),
-                    label: 'Flash Card',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.quiz),
-                    label: 'Quiz',
-                  ),
-                ],
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: false,
+        titleSpacing: 0,
+        title: Text(title),
+      ),
+      drawer: LessonDrawer(
+        currentLesson: selection.lesson,
+        onSelect: (lesson) async {
+          if (lesson == selection.lesson) {
+            if (context.mounted) Navigator.of(context).pop();
+            return;
+          }
+          await ref.read(lessonSelectionProvider.notifier).setLesson(lesson);
+          await ref.read(selectedKanjiIdProvider.notifier).setSelectedId(null);
+          ref.invalidate(kanjiListProvider);
+          ref.invalidate(selectedKanjiIdProvider);
+          setState(() => _tabIndex = 0);
+          if (context.mounted) Navigator.of(context).pop();
+        },
+      ),
+      body: _MainBody(
+        tabIndex: _tabIndex,
+      ),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const AdBanner(useSafeArea: false),
+          BottomNavigationBar(
+            currentIndex: _tabIndex,
+            onTap: (index) => setState(() => _tabIndex = index),
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.menu_book),
+                label: 'Study',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.style),
+                label: 'Flash Card',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.quiz),
+                label: 'Quiz',
               ),
             ],
           ),
-        );
-      },
-      error: (e, st) => Scaffold(body: ErrorView(message: e.toString())),
-      loading: () => const Scaffold(body: LoadingIndicator()),
+        ],
+      ),
     );
   }
 }
