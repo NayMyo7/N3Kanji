@@ -148,10 +148,7 @@ class WordDetailScreen extends ConsumerWidget {
                               context.push('/practice/kanji', extra: k),
                         ),
                       ),
-                      _Section(
-                        title: 'Examples',
-                        child: _Examples(word: w),
-                      ),
+                      _ExamplesSection(word: w),
                     ],
                   ),
                 ),
@@ -368,23 +365,48 @@ class _KanjiList extends StatelessWidget {
   }
 }
 
-class _Examples extends ConsumerWidget {
-  const _Examples({required this.word});
+class _ExamplesSection extends ConsumerStatefulWidget {
+  const _ExamplesSection({required this.word});
 
   final Word word;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final query =
-        word.word.trim().isNotEmpty ? word.word.trim() : word.japanese.trim();
+  ConsumerState<_ExamplesSection> createState() => _ExamplesSectionState();
+}
+
+class _ExamplesSectionState extends ConsumerState<_ExamplesSection> {
+  void _refreshExamples(String query) {
+    ref.invalidate(wordExamplesProvider(query: query, limit: 6));
+  }
+
+  Widget _buildRefreshButton(String query, String label) {
+    return TextButton.icon(
+      icon: const Icon(Icons.refresh, size: 20),
+      label: Text(label),
+      onPressed: () => _refreshExamples(query),
+      style: TextButton.styleFrom(
+        foregroundColor: Theme.of(context).colorScheme.primary,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final query = widget.word.word.trim().isNotEmpty
+        ? widget.word.word.trim()
+        : widget.word.japanese.trim();
+
     if (query.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.all(AppSizes.lg),
-        child: Text(
-          'No query available for examples.',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+      return _Section(
+        title: 'Examples',
+        child: Padding(
+          padding: const EdgeInsets.all(AppSizes.lg),
+          child: Text(
+            'No query available for examples.',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+          ),
         ),
       );
     }
@@ -393,90 +415,110 @@ class _Examples extends ConsumerWidget {
       wordExamplesProvider(query: query, limit: 6),
     );
 
-    return examplesAsync.when(
-      loading: () => const Padding(
-        padding: EdgeInsets.symmetric(vertical: 18),
-        child: Center(child: LoadingIndicator()),
-      ),
-      error: (e, st) => Padding(
-        padding: const EdgeInsets.all(AppSizes.lg),
-        child: Text(
-          'Failed to load examples. Check your internet connection.',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+    return _Section(
+      title: 'Examples',
+      child: examplesAsync.when(
+        loading: () => const Padding(
+          padding: EdgeInsets.symmetric(vertical: 18),
+          child: Center(child: LoadingIndicator()),
         ),
-      ),
-      data: (examples) {
-        if (examples.isEmpty) {
-          return Padding(
-            padding: const EdgeInsets.all(AppSizes.lg),
-            child: Text(
-              'No examples found.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+        error: (e, st) => Padding(
+          padding: const EdgeInsets.all(AppSizes.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Failed to load examples',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+              ),
+              const SizedBox(height: AppSizes.sm),
+              _buildRefreshButton(query, 'Retry'),
+            ],
+          ),
+        ),
+        data: (examples) {
+          if (examples.isEmpty) {
+            return Padding(
+              padding: const EdgeInsets.all(AppSizes.lg),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.search_off,
+                    size: 56,
+                    color: Theme.of(context).colorScheme.outline,
                   ),
-            ),
-          );
-        }
+                  const SizedBox(height: AppSizes.md),
+                  Text(
+                    'No examples found',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                  ),
+                  const SizedBox(height: AppSizes.sm),
+                  Text(
+                    'Try refreshing to load new examples',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                  ),
+                  const SizedBox(height: AppSizes.lg),
+                  _buildRefreshButton(query, 'Refresh'),
+                ],
+              ),
+            );
+          }
 
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (var i = 0; i < examples.length; i++) ...[
-              if (i != 0)
-                const Divider(
-                  height: 1,
-                  thickness: 1,
-                  color: AppColors.divider,
-                ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSizes.listTileHorizontalPadding,
-                  AppSizes.md,
-                  AppSizes.listTileHorizontalPadding,
-                  AppSizes.md,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (var i = 0; i < examples.length; i++) ...[
+                if (i != 0)
+                  const Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: AppColors.divider,
+                  ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSizes.listTileHorizontalPadding,
+                    AppSizes.md,
+                    AppSizes.listTileHorizontalPadding,
+                    AppSizes.md,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
                         examples[i].japanese,
-                        textAlign: TextAlign.left,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                               fontWeight: FontWeight.w700,
                             ),
                       ),
-                    ),
-                    const SizedBox(height: AppSizes.sm),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
+                      const SizedBox(height: AppSizes.sm),
+                      Text(
                         examples[i].english,
-                        textAlign: TextAlign.left,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: Theme.of(context)
                                   .colorScheme
                                   .onSurfaceVariant,
                             ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-            const Divider(height: 1, thickness: 1, color: AppColors.divider),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSizes.listTileHorizontalPadding,
-                10,
-                AppSizes.listTileHorizontalPadding,
-                10,
-              ),
-              child: Align(
-                alignment: Alignment.centerLeft,
+              ],
+              const Divider(height: 1, thickness: 1, color: AppColors.divider),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSizes.listTileHorizontalPadding,
+                  vertical: AppSizes.sm,
+                ),
                 child: Text(
                   'Source: Tatoeba (CC BY 2.0 FR)',
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
@@ -484,10 +526,10 @@ class _Examples extends ConsumerWidget {
                       ),
                 ),
               ),
-            ),
-          ],
-        );
-      },
+            ],
+          );
+        },
+      ),
     );
   }
 }

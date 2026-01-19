@@ -51,7 +51,7 @@ final class WordExamplesServiceProvider extends $FunctionalProvider<
 }
 
 String _$wordExamplesServiceHash() =>
-    r'29d5573a92bbc92b48fbb6e8414d8685e60908f4';
+    r'0c21233af378be446e8fd0c74383d19fffbc0c3e';
 
 @ProviderFor(wordExamples)
 final wordExamplesProvider = WordExamplesFamily._();
@@ -118,7 +118,7 @@ final class WordExamplesProvider extends $FunctionalProvider<
   }
 }
 
-String _$wordExamplesHash() => r'720c0ad7dce40eeac9a17c7c2e06d8d8abc1db02';
+String _$wordExamplesHash() => r'ac5052ffaf3b9f63cd2c0dac1eb9fc8d6dce633a';
 
 final class WordExamplesFamily extends $Family
     with

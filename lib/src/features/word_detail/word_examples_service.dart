@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
@@ -14,6 +16,27 @@ class WordExamplesService {
     required String query,
     int limit = 5,
   }) async {
+    try {
+      return await _performFetch(query, limit).timeout(
+        const Duration(seconds: 3),
+        onTimeout: () {
+          throw TimeoutException('Connection timeout');
+        },
+      );
+    } on SocketException {
+      throw Exception('No internet connection');
+    } on TimeoutException {
+      rethrow;
+    } catch (e) {
+      if (e.toString().contains('Failed host lookup') ||
+          e.toString().contains('Network is unreachable')) {
+        throw Exception('No internet connection');
+      }
+      rethrow;
+    }
+  }
+
+  Future<List<TatoebaExample>> _performFetch(String query, int limit) async {
     final uri = Uri.https('tatoeba.org', '/eng/api_v0/search', <String, String>{
       'from': 'jpn',
       'to': 'eng',

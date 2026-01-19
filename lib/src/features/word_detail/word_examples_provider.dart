@@ -6,6 +6,7 @@ part 'word_examples_provider.g.dart';
 
 @riverpod
 WordExamplesService wordExamplesService(Ref ref) {
+  ref.keepAlive();
   return WordExamplesService();
 }
 
@@ -15,6 +16,7 @@ Future<List<TatoebaExample>> wordExamples(
   required String query,
   required int limit,
 }) {
+  ref.keepAlive();
   final service = ref.watch(wordExamplesServiceProvider);
   return service.fetchExamples(query: query, limit: limit);
 }
