@@ -44,13 +44,11 @@ class KanjiDicEntry {
     final onyomi = asStringList(json['on']);
     final kunyomi = asStringList(json['kun']);
 
-    final meanings2 = meanings.isNotEmpty
-        ? meanings
-        : asStringList(json['meaning']);
+    final meanings2 =
+        meanings.isNotEmpty ? meanings : asStringList(json['meaning']);
     final onyomi2 = onyomi.isNotEmpty ? onyomi : asStringList(json['onyomi']);
-    final kunyomi2 = kunyomi.isNotEmpty
-        ? kunyomi
-        : asStringList(json['kunyomi']);
+    final kunyomi2 =
+        kunyomi.isNotEmpty ? kunyomi : asStringList(json['kunyomi']);
 
     return KanjiDicEntry(
       literal: literal,
@@ -70,7 +68,7 @@ class KanjiDicService {
   }
 
   Future<Map<String, KanjiDicEntry>> _loadInternal() async {
-    final raw = await rootBundle.loadString('assets/kanjidict2.json');
+    final raw = await rootBundle.loadString('assets/kanjidict2_slim.json');
     final data = jsonDecode(raw);
     if (data is! Map) return const <String, KanjiDicEntry>{};
 

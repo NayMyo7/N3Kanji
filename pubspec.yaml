@@ -84,7 +84,7 @@ flutter:
   assets:
     - assets/N3Kanji
     - assets/kanjivg/
-    - assets/kanjidict2.json
+    - assets/kanjidict2_slim.json
     - assets/icons/app_icon.png
     - assets/icons/ic_launcher.png
     - assets/lottie/trophy.json
