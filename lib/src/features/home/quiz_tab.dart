@@ -23,7 +23,7 @@ class _QuizTabState extends State<QuizTab> {
 
   QuizType _type = QuizType.kana;
   int _score = 0;
-  int _questionCount = 0;
+  int _questionCount = 1;
 
   Word? _correct;
   List<String> _options = const [];
@@ -301,7 +301,7 @@ class _QuizTabState extends State<QuizTab> {
   void _restart() {
     setState(() {
       _score = 0;
-      _questionCount = 0;
+      _questionCount = 1;
       _selected = null;
       _answered = false;
       _rebuildDeck();
@@ -321,7 +321,7 @@ class _QuizTabState extends State<QuizTab> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.words != widget.words) {
       _score = 0;
-      _questionCount = 0;
+      _questionCount = 1;
       _type = QuizType.kana;
       _rebuildDeck();
       _newQuestion();
@@ -496,7 +496,7 @@ class _QuizTabState extends State<QuizTab> {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: '${_questionCount + 1}',
+                            text: '$_questionCount',
                             style: Theme.of(context)
                                 .textTheme
                                 .titleLarge
